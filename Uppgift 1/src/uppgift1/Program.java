@@ -7,51 +7,86 @@ import java.util.StringTokenizer;
 
 public class Program {
 
-	public static String getUserInputFromDialogue(String dialogue) throws IOException {
-		BufferedReader inputReader = new BufferedReader(new InputStreamReader(System.in));
-		System.out.print(dialogue);
-		return inputReader.readLine();
-	}
-
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 
 		BufferedReader inputReader = new BufferedReader(new InputStreamReader(System.in));
 
-		String test = " Detta  är ett test av ordräknare";
-		int countOfTokens = new StringTokenizer(test).countTokens();
-		System.out.println(countOfTokens);
+		System.out.println("Ange en text att jobba med: ");
+		String input = inputReader.readLine();
 
-		int countWords = 0;
-		String input = "  333 4 && # alive   is  awesome   ";
-		String[] anArray = input.split("\\s+");
+		char[] anArray = new char[input.length()];
 		
-		int length = input.length();
+		input = input.toLowerCase();
+		input.getChars(0, anArray.length, anArray, 0);
+		int bokst = 0;
+		int siffror = 0;
+		int tecken = 0;
+		int space = 0;
+
 		for (int i = 0; i < anArray.length; i++) {
-			countWords++;
+			if (anArray[i] >= 'a' && anArray[i] <= 'ö')
+				bokst++;
 		}
-		System.out.println(countWords);
-		System.out.println(length);
-		
-/*		\w - Matches any word character. 
-		\W - Matches any nonword character. 
-		\s - Matches any white-space character. 
-		\S - Matches anything but white-space characters. 
-		\d - Matches any digit. 
-		\D - Matches anything except digits.
-*/
-		
-		int countChar = 0;
-		String inputC = "333 44 && #& /# alive  is  awesome   ";
-		String[] anArrayC = inputC.split("\\s+");
-		
-		for (int i = 0; i < anArrayC.length; i++) {
-			countChar++;
+
+
+		for (int i = 0; i < anArray.length; i++) {
+			if (anArray[i] >= '0' && anArray[i] <= '9')
+				siffror++;
 		}
-		System.out.println(countChar);
-		
-		
-		
-		
+
+
+		for (int i = 0; i < anArray.length; i++)
+			if (anArray[i] == ' ')
+				space++;
+
+
+		tecken = anArray.length - (bokst + siffror + space);
+
+
+		String text = input;
+		int countOfTokens = new StringTokenizer(text).countTokens();
+		String svar = "";
+
+		do {
+			System.out.println("\nTexten är: \n" + text);
+			System.out.println("\nAnge\n1 för att räkna ord\n2 för att räkna bokstäver\n3 för att visa båda\n4 för att räkna siffror\n5 för att räkna tecken\n6 för att räkna mellanslag\n7 för att räkna total längd\n8 Ange ny text\n9 för att avsluta");
+			svar = inputReader.readLine();
+
+			switch (svar) {
+			case "1":
+				System.out.println("Antal ord: " + countOfTokens);
+				break;
+			case "2":
+				System.out.println("Antal bokstäver: " + bokst);
+				break;
+			case "3":
+				System.out.println("Texten har " + bokst + " bokstäver och består av " + countOfTokens + " ord");
+				break;
+			case "4":
+				System.out.println("Antal siffror: " + siffror);
+				break;
+			case "5":
+				System.out.println("Antal tecken: " + tecken);
+				break;
+			case "6":
+				System.out.println("Antal mellanslag: " + space);
+				break;
+			case "7":
+				System.out.println("Total längd: " + anArray.length);
+				break;
+			case "8":
+				System.out.println("" );
+				break;
+			case "9":
+				System.out.println("Avslut");
+	//			System.exit(0);
+				break;
+			default:
+				System.out.println("Oops");
+				break;
+			}
+		} while (svar.compareTo("9") != 0);
+
 	}
 
 }
