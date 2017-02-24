@@ -19,70 +19,43 @@ public class Dialogue {
 		BufferedReader inputReader = new BufferedReader(new InputStreamReader(System.in));
 		BookingHandler bh = new BookingHandler();
 		String svar = "";
-		String nameToFind = "";
 		LocalDateTime startTime = null;
 		LocalDateTime endTime = null;
 
 		
 		do {
-			System.out.println("1. Se bokningar\n2. Lägg till ny bokning\n0. Avsluta");
+			System.out.println("\n1. Se bokningar\n2. Lägg till ny bokning\n0. Avsluta");
 				svar = inputReader.readLine();
 
 			switch (svar) {
-			case "1":
+			case "1": // visa bokade tider
 				ArrayList<Time> lista = bh.getTime();
 				for (Time snurra : lista)
 					System.out.println("Bokad tid: " + snurra.getStartTime().toString() + " " + snurra.getEndTime().toString());
 				break;
 
-			case "2":
+			case "2": // ta emot förslag på tid och kolla om den är tillgänglig via BookingHandler
 				System.out.println("Ange ett datum och tid för bokning enligt formatet\nyy-MM-dd HH:mm");
 				String inputTime = inputReader.readLine();
 				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy-MM-dd HH:mm");
-				LocalDateTime formattedInput = LocalDateTime.parse(inputTime, formatter);
+				LocalDateTime formattedInput = LocalDateTime.parse(inputTime, formatter);  //  Snyggare formattering
 				System.out.println("Angiven söktid: " + formattedInput.format(formatter));
-				
 				
 				Time myTime = bh.createTime(startTime, endTime);
 				myTime.setStartTime(formattedInput);
+//				Duration CUT_DURATION = Duration.ofMinutes(60);   // tester för att använda en konstant så att man kan ange olika tider för herrar, damer, färgning etc
 //				myTime.endTime = formatDateTime + CUT_DURATION;
 				myTime.setEndTime(formattedInput.plusMinutes(43));   //  .plusMinutes(CUT_DURATION);
 				
 				bh.checkAvailability(myTime);
+//				bh.addTime(myTime);  /flyttad till checkAvailability för att inte få krockande tider inlagda i arrayen
 				
-				bh.addTime(myTime);
-			
-				Duration CUT_DURATION = Duration.ofMinutes(60);
-				
-				System.out.println("Starttid: " + myTime.getStartTime().format(formatter));
-				System.out.println("Sluttid: " + myTime.getEndTime().format(formatter));
 				break;
-
 			case "0":
 			default:
 				break;
 			}
 		} while (!svar.equals("0"));
 		System.out.println("Avslut!");
-
-		
-//		Time myTime = new Time(startTime, endTime);
-
-		
-
-//		System.out.println("Ange tid: ");
-//		String inputTime = inputReader.readLine();
-		
-//		DateFormat format = new SimpleDateFormat("yy-MM-dd HH:mm");
-//		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy-MM-dd");
-
-
-
-		//System.out.println();
-					
-
-
-		
 	}
-
 }
