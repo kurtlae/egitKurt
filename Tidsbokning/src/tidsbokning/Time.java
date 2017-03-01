@@ -20,7 +20,7 @@ public class Time {
 	
 	public Time (String name, LocalDateTime start, LocalDateTime end){
 		try {
-			this.setBookingName(name);
+			this.bookingName = name;
 			this.startTime = start;
 			this.endTime = end;
 		} catch (DateTimeException dte) {
