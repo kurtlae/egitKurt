@@ -13,8 +13,8 @@ public class BookingHandler {
 		bookingArray = new ArrayList<Time>();
 	}
 
-	public Time createTime(LocalDateTime start, LocalDateTime end) {
-		return new Time(start, end);
+	public Time createTime(String name, LocalDateTime start, LocalDateTime end) {
+		return new Time(name, start, end);
 	}
 
 	public void addTime(Time t) {
@@ -26,22 +26,24 @@ public class BookingHandler {
 	}
 
 	public static void checkAvailability(Time ct) {
+		String bookingName = ct.getBookingName();
 		LocalDateTime checkStart = ct.getStartTime();
 		LocalDateTime checkEnd = ct.getEndTime();
-//		Time checkTime = bh.createTime(checkStart, checkEnd);  // ej anv‰nd
+		
 		boolean OK = true;
 
 		for (Time checkArray : bookingArray) {  // kolla ny tid mot de befintliga i bookingArray
 			if (checkEnd.isBefore(checkArray.getStartTime()) || (checkStart.isAfter(checkArray.getEndTime()))) {
 			} else {
-				System.out.println("Tyv‰rr ‰r din fˆreslagna tid inte tillg‰nglig\nV‰lj 2 fˆr att ange ny tid eller 1 fˆr att se bokade tider");
-          		OK = false; // om tiden ej ‰r tillg‰nglig ska den inte lagras i arrayen
+				System.out.println("Angiven s√∂ktid: " + ct.getStartTime());
+				System.out.println("Tyv√§rr √§r din f√∂reslagna tid inte tillg√§nglig\nV√§lj 2 f√∂r att ange ny tid eller 1 f√∂r att se bokade tider");
+          		OK = false; // om tiden ej √§r tillg√§nglig ska den inte lagras i arrayen
 			}
 		}
-		if (OK){ // lagring i arrayen om de nya ‰r OK
-		Time time = bh.createTime(checkStart, checkEnd);
+		if (OK){ // lagring i arrayen om de nya √§r OK
+		Time time = bh.createTime(bookingName, checkStart, checkEnd);
 		bh.addTime(time);
-		System.out.println("Du ‰r bokad: " + time.getStartTime());
+		System.out.println(time.getBookingName() + " √§r bokad: " + time.getStartTime());
 		}
 	}
 }

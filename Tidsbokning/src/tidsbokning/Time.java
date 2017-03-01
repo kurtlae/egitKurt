@@ -16,10 +16,16 @@ public class Time {
 	private String time;
 	private LocalDateTime startTime;
 	private LocalDateTime endTime;
+	private String bookingName;
 	
-	public Time (LocalDateTime start, LocalDateTime end){
-		this.startTime = start;
-		this.endTime = end;
+	public Time (String name, LocalDateTime start, LocalDateTime end){
+		try {
+			this.setBookingName(name);
+			this.startTime = start;
+			this.endTime = end;
+		} catch (DateTimeException dte) {
+//			dte.printStackTrace();
+			System.out.println("Aj då, fel i datumhanteringen (i Time) ");	}
 	}
 	
 	public String getDate() {
@@ -45,6 +51,14 @@ public class Time {
 	}
 	public void setEndTime(LocalDateTime endTime) {
 		this.endTime = endTime;
+	}
+
+	public String getBookingName() {
+		return bookingName;
+	}
+
+	public void setBookingName(String bookingName) {
+		this.bookingName = bookingName;
 	}
 	
 }

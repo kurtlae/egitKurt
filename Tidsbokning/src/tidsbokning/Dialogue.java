@@ -8,6 +8,7 @@ import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -18,37 +19,170 @@ public class Dialogue {
 
 		BufferedReader inputReader = new BufferedReader(new InputStreamReader(System.in));
 		BookingHandler bh = new BookingHandler();
+		SchemaHandler sch = new SchemaHandler();
 		String svar = "";
 		LocalDateTime startTime = null;
 		LocalDateTime endTime = null;
+		int errorcounter = 0;
 
-		
+
 		do {
-			System.out.println("\n1. Se bokningar\n2. L�gg till ny bokning\n0. Avsluta");
+			System.out.println("\n1. Se bokningar\n2. Lägg till ny bokning\n9. Underhåll av arbetstider\n0. Avsluta");
+
+			try {
 				svar = inputReader.readLine();
+			} catch (IOException ioem) {
+				ioem.printStackTrace();
+				System.out.println("Ooops, tyvärr ... vid Val ");
+			}
 
 			switch (svar) {
 			case "1": // visa bokade tider
 				ArrayList<Time> lista = bh.getTime();
 				for (Time snurra : lista)
-					System.out.println("Bokad tid: " + snurra.getStartTime().toString() + " " + snurra.getEndTime().toString());
+					System.out.println(
+							"Bokad tid: " + snurra.getBookingName() + " " + snurra.getStartTime().toString() + " " + snurra.getEndTime().toString());
 				break;
 
-			case "2": // ta emot f�rslag p� tid och kolla om den �r tillg�nglig via BookingHandler
-				System.out.println("Ange ett datum och tid f�r bokning enligt formatet\nyy-MM-dd HH:mm");
-				String inputTime = inputReader.readLine();
-				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy-MM-dd HH:mm");
-				LocalDateTime formattedInput = LocalDateTime.parse(inputTime, formatter);  //  Snyggare formattering
-				System.out.println("Angiven s�ktid: " + formattedInput.format(formatter));
+			case "2": // ta emot förslag på tid och kolla om den är tillgänglig via BookingHandler
 				
-				Time myTime = bh.createTime(startTime, endTime);
-				myTime.setStartTime(formattedInput);
-//				Duration CUT_DURATION = Duration.ofMinutes(60);   // tester f�r att anv�nda en konstant s� att man kan ange olika tider f�r herrar, damer, f�rgning etc
-//				myTime.endTime = formatDateTime + CUT_DURATION;
-				myTime.setEndTime(formattedInput.plusMinutes(43));   //  .plusMinutes(CUT_DURATION);
+				String inputName = null;
+				int errorname = 0;
 				
-				bh.checkAvailability(myTime);
-//				bh.addTime(myTime);  /flyttad till checkAvailability f�r att inte f� krockande tider inlagda i arrayen
+				System.out.println("Ange namn: ");
+				do {
+							if (errorname > 0){
+								System.out.println("Du glömde att ange namn...");
+							}
+							errorname++;
+				try {
+					inputName = inputReader.readLine();
+				} catch (NullPointerException npe) {
+//					npe.printStackTrace();
+					System.out.println("Du glömde att ange namn...");
+				}
+
+				} while (inputName.equals(""));
+				
+				int errordate = 0;
+				System.out.println("Ange ett datum och tid för bokning enligt formatet:\nyy-MM-dd HH:mm");
+				boolean OKDate = true;
+
+//					if (OKName){
+						do {
+				try {
+					String inputTime = inputReader.readLine();
+					DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy-MM-dd HH:mm");
+					LocalDateTime formattedInput = LocalDateTime.parse(inputTime, formatter); // Snyggare
+																								// formattering
+//					System.out.println("Angiven söktid: " + formattedInput.format(formatter));
+
+					Time myTime = bh.createTime(inputName, startTime, endTime);
+					myTime.setStartTime(formattedInput);
+
+					myTime.setEndTime(formattedInput.plusMinutes(43)); // .plusMinutes(CUT_DURATION);
+
+					bh.checkAvailability(myTime);
+
+				} catch (NumberFormatException nfe) {
+					// nfe.printStackTrace();
+					System.out.println("Fel NFE i Case 2");
+				} catch (IOException ioe2) {
+					// ioe2.printStackTrace();
+					System.out.println("Fel IO i Case 2");
+				} catch (DateTimeParseException dtpe2) {
+					// dtpe2.printStackTrace();
+					OKDate = false;
+					errorcounter++;
+					if (errorcounter < 2) {
+						System.out.println("Ooops, tyvärr blev det nåt fel i formatet på angiven tid\nAnge datum och tid enligt formatet:\nyy-MM-dd HH:mm");
+					} else if (errorcounter < 3){
+						System.out.println("Aj då, det blev fel igen\nAnge datum och tid enligt formatet:\nyy-MM-dd HH:mm");
+					} else if (errorcounter < 4){
+					System.out.println("Logiken är så här:\nyy är år\nMM är månad i siffror\ndd är datum\nHH är timme enligt 24-timmarsregeln\nmm är minuter\nAntal bokstäver visar antal siffror du ska ange");
+					System.out.println("yy-MM-dd HH:mm");
+					} else
+						System.out.println("Skärpning !!!");
+
+				}
+					break;
+				
+				} while (!OKDate);
+						
+						
+			case "9":
+				String inputHairdresser = null;
+				int Hairdresser = 0;
+				
+				System.out.println("Ange frisör: ");
+				do {
+							if (Hairdresser > 0){
+								System.out.println("Du glömde att ange namn...");
+							}
+							Hairdresser++;
+				try {
+					inputHairdresser = inputReader.readLine();
+				} catch (NullPointerException npe) {
+//					npe.printStackTrace();
+					System.out.println("Du glömde att ange namn...");
+				}
+
+				} while (inputHairdresser.equals(""));
+				
+				int errordateH = 0;
+				System.out.println("Ange datum och tid för ej arbetstid:\nyy-MM-dd HH:mm");
+				boolean OKDateH = true;
+
+//					if (OKName){
+						do {
+				try {
+					String inputTime = inputReader.readLine();
+					DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy-MM-dd HH:mm");
+					LocalDateTime formattedInput = LocalDateTime.parse(inputTime, formatter); // Snyggare
+																								// formattering
+//					System.out.println("Angiven söktid: " + formattedInput.format(formatter));
+
+					Time myTime = sch.createTime(inputHairdresser, startTime, endTime);
+					myTime.setStartTime(formattedInput);
+					
+					System.out.println("Ange datum och sluttid för ej arbetstid:\nyy-MM-dd HH:mm");
+					String inputTime2 = inputReader.readLine();
+					DateTimeFormatter formatter2 = DateTimeFormatter.ofPattern("yy-MM-dd HH:mm");
+					LocalDateTime formattedInput2 = LocalDateTime.parse(inputTime2, formatter2);
+					
+//					Time myTime2 = sch.createTime(inputHairdresser, startTime, endTime);
+					myTime.setEndTime(formattedInput2);
+					
+//					myTime.setEndTime(formattedInput.plusMinutes(43)); // .plusMinutes(CUT_DURATION);
+
+					// För upprepning lägg till plusMinutes.(variabel från nån adminstrations timehandler)
+					
+					bh.checkAvailability(myTime);
+
+				} catch (NumberFormatException nfe) {
+					// nfe.printStackTrace();
+					System.out.println("Fel NFE i Case 2");
+				} catch (IOException ioe2) {
+					// ioe2.printStackTrace();
+					System.out.println("Fel IO i Case 2");
+				} catch (DateTimeParseException dtpe2) {
+					// dtpe2.printStackTrace();
+					OKDate = false;
+					errorcounter++;
+					if (errorcounter < 2) {
+						System.out.println("Ooops, tyvärr blev det nåt fel i formatet på angiven tid\nAnge datum och tid enligt formatet:\nyy-MM-dd HH:mm");
+					} else if (errorcounter < 3){
+						System.out.println("Aj då, det blev fel igen\nAnge datum och tid enligt formatet:\nyy-MM-dd HH:mm");
+					} else if (errorcounter < 4){
+					System.out.println("Logiken är så här:\nyy är år\nMM är månad i siffror\ndd är datum\nHH är timme enligt 24-timmarsregeln\nmm är minuter\nAntal bokstäver visar antal siffror du ska ange");
+					System.out.println("yy-MM-dd HH:mm");
+					} else
+						System.out.println("Skärpning !!!");
+
+				}
+					break;
+				
+				} while (!OKDate);
 				
 				break;
 			case "0":
