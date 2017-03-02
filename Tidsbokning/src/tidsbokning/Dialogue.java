@@ -35,6 +35,8 @@ public class Dialogue {
 				System.out.println("Ooops, tyvärr ... vid Val ");
 			}
 
+			Time repeatTime;
+			Duration formattedInput;
 			switch (svar) {
 			case "1": // visa bokade tider
 				ArrayList<Time> lista = bh.getTime();
@@ -66,23 +68,7 @@ public class Dialogue {
 
 				String inputType = null;
 				int errortype = 0;
-
-				System.out.println("Ange typ av klippning\n1. Kvinnlig\n3. Manlig");
-				String cutType = null;
-				String Type = inputReader.readLine();
-
-				switch (Type) {
-				case "1":
-					String cutType = "Female";
-					break;
-
-				case "3":
-					String cutType = "Male";
-					break;
-				default:
-					break;
-				}
-
+		
 				int errordate = 0;
 				System.out.println("Ange ett datum och tid för bokning enligt formatet:\nyy-MM-dd HH:mm");
 				boolean OKDate = true;
@@ -93,11 +79,28 @@ public class Dialogue {
 						DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy-MM-dd HH:mm");
 						LocalDateTime formattedInput = LocalDateTime.parse(inputTime, formatter);
 
-//						String inputName;
+						// String inputName;
 						Time myTime = bh.createTime(inputName, startTime, endTime);
 						myTime.setStartTime(formattedInput);
 
-						myTime.setEndTime(formattedInput.plusMinutes(Constants.cutMale));
+						System.out.println("Ange typ av klippning\n1. Kvinnlig\n3. Manlig");
+						String cutType = null;
+
+						String Type = inputReader.readLine();
+
+						switch (Type) {
+						case "1":
+							myTime.setEndTime(formattedInput.plusMinutes(Constants.cutFemale));
+							break;
+
+						case "3":
+							myTime.setEndTime(formattedInput.plusMinutes(Constants.cutMale));
+							break;
+							
+						default:
+							break;
+						}
+
 
 						bh.checkAvailability(myTime);
 
@@ -126,15 +129,10 @@ public class Dialogue {
 					}
 					break;
 				} while (!OKDate);
-
-				// Time myTime = bh.createTime(inputName, startTime, endTime);
-				// myTime.setStartTime(formattedInput);
-				//
-				// myTime.setEndTime(formattedInput.plusMinutes(Constants.cutMale));
-				//
-				// bh.checkAvailability(myTime);
+				break;
 
 			case "9":
+				
 				String inputHairdresser = null;
 				int Hairdresser = 0;
 
@@ -147,7 +145,6 @@ public class Dialogue {
 					try {
 						inputHairdresser = inputReader.readLine();
 					} catch (NullPointerException npe) {
-						// npe.printStackTrace();
 						System.out.println("Du glömde att ange namn...");
 					}
 
@@ -159,42 +156,30 @@ public class Dialogue {
 
 				// if (OKName){
 				do {
+					
+					
 					try {
 						String inputTime = inputReader.readLine();
 						DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy-MM-dd HH:mm");
-						LocalDateTime formattedInput = LocalDateTime.parse(inputTime, formatter); // Snyggare
-																									// formattering
-						// System.out.println("Angiven söktid: " +
-						// formattedInput.format(formatter));
+						LocalDateTime formattedInput2 = LocalDateTime.parse(inputTime, formatter);
 
 						Time myTime = sch.createTime(inputHairdresser, startTime, endTime);
-						myTime.setStartTime(formattedInput);
+						myTime.setStartTime(formattedInput2);
 
 						System.out.println("Ange datum och sluttid för ej arbetstid:\nyy-MM-dd HH:mm");
 						String inputTime2 = inputReader.readLine();
 						DateTimeFormatter formatter2 = DateTimeFormatter.ofPattern("yy-MM-dd HH:mm");
-						LocalDateTime formattedInput2 = LocalDateTime.parse(inputTime2, formatter2);
+						LocalDateTime formattedInput3 = LocalDateTime.parse(inputTime2, formatter2);
 
-						// Time myTime2 = sch.createTime(inputHairdresser,
-						// startTime, endTime);
 						myTime.setEndTime(formattedInput2);
-
-						// myTime.setEndTime(formattedInput.plusMinutes(43)); //
-						// .plusMinutes(CUT_DURATION);
-
-						// För upprepning lägg till plusMinutes.(variabel från
-						// nån adminstrations timehandler)
 
 						bh.checkAvailability(myTime);
 
 					} catch (NumberFormatException nfe) {
-						// nfe.printStackTrace();
 						System.out.println("Fel NFE i Case 2");
 					} catch (IOException ioe2) {
-						// ioe2.printStackTrace();
 						System.out.println("Fel IO i Case 2");
 					} catch (DateTimeParseException dtpe2) {
-						// dtpe2.printStackTrace();
 						OKDate = false;
 						errorcounter++;
 						if (errorcounter < 2) {
@@ -215,6 +200,26 @@ public class Dialogue {
 
 				} while (!OKDate);
 
+				System.out.println("Vill du lägga upp tiden som stående varje dag ?");
+				String inputRepeatTime = null;
+
+				
+//				if (inputRepeatTime != null)
+//					Time repeatTime = sch.createTime(inputHairdresser, startTime, endTime);
+//					repeatTime.setStartTime(formattedInput.plusDays(7));
+//
+//					DateTimeFormatter formatter3 = DateTimeFormatter.ofPattern("yy-MM-dd HH:mm");
+//					LocalDateTime formattedInput3 = LocalDateTime.parse(inputTime3, formatter3);
+//
+//					repeatTime.setEndTime(formattedInput.plusDays(7));
+//
+//					bh.checkAvailability(repeatTime);
+
+				// lägg in ""LocalTime" för att kunna ange arbetstider
+				// Tid arbtid = "08:00")
+				
+
+				
 				// break;
 			case "0":
 			default:

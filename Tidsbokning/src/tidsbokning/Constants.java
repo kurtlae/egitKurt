@@ -7,6 +7,14 @@ public class Constants {
 	public static final long cutMale = 26;
 	public static final long cutFemale = 55;
 	public static final long inBetween = 5;
+	public static final long cutType = 0;
+	
+
+	
+	public static long getCuttype() {
+		return cutType;
+	}
+
 	
 	
 	private int LENGTH;
