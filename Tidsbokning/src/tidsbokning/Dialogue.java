@@ -36,7 +36,6 @@ public class Dialogue {
 			}
 
 			Time repeatTime;
-			Duration formattedInput;
 			switch (svar) {
 			case "1": // visa bokade tider
 				ArrayList<Time> lista = bh.getTime();
@@ -45,12 +44,13 @@ public class Dialogue {
 							+ " " + snurra.getEndTime().toString());
 				break;
 
-			case "2": // ta emot förslag på tid och kolla om den är tillgänglig
-						// via BookingHandler
+			// Ta emot tid och kolla om den är tillgänglig
+			case "2":
 
 				String inputName = null;
 				int errorname = 0;
 
+				// Namn på personen som vill boka tid för med koll på att man inte anger nåt (bara trycker ENTER)
 				System.out.println("Ange namn: ");
 				do {
 					if (errorname > 0) {
@@ -66,43 +66,46 @@ public class Dialogue {
 
 				} while (inputName.equals(""));
 
-				String inputType = null;
-				int errortype = 0;
-		
+				// String inputType = null;
+				// int errortype = 0;
+
+				// Ta emot ett datum enligt specat format
 				int errordate = 0;
 				System.out.println("Ange ett datum och tid för bokning enligt formatet:\nyy-MM-dd HH:mm");
 				boolean OKDate = true;
 
+				// Loop för att tvinga användaren att ange datum i rätt format (OKDate)
 				do {
 					try {
 						String inputTime = inputReader.readLine();
 						DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy-MM-dd HH:mm");
 						LocalDateTime formattedInput = LocalDateTime.parse(inputTime, formatter);
 
-						// String inputName;
 						Time myTime = bh.createTime(inputName, startTime, endTime);
 						myTime.setStartTime(formattedInput);
 
-						System.out.println("Ange typ av klippning\n1. Kvinnlig\n3. Manlig");
+						// Val av klipptyp
+						System.out.println("Ange typ av klippning\n1. Kvinnlig\n2. Manlig");
 						String cutType = null;
-
 						String Type = inputReader.readLine();
 
+						// Plocka in tid från Constants
 						switch (Type) {
 						case "1":
 							myTime.setEndTime(formattedInput.plusMinutes(Constants.cutFemale));
 							break;
 
-						case "3":
+						case "2":
 							myTime.setEndTime(formattedInput.plusMinutes(Constants.cutMale));
 							break;
-							
 						default:
 							break;
 						}
 
-
+						// Skicka tiden för kontroll om den är tillgänglig eller ej
 						bh.checkAvailability(myTime);
+						// så här föreslog Eclipse att det skulle se ut efter ett antal tillägg i koden
+//						BookingHandler.checkAvailability(myTime);
 
 					} catch (NumberFormatException nfe) {
 						// nfe.printStackTrace();
@@ -112,6 +115,8 @@ public class Dialogue {
 						System.out.println("Fel IO i Case 2");
 					} catch (DateTimeParseException dtpe2) {
 						// dtpe2.printStackTrace();
+
+						// Loop för att påpeka för användaren att hen gör fel
 						OKDate = false;
 						errorcounter++;
 						if (errorcounter < 2) {
@@ -131,8 +136,12 @@ public class Dialogue {
 				} while (!OKDate);
 				break;
 
+			// Administratörsval som i grunden är densamma som den vanliga
+			// tidsbokningen dock med skillnaden att man här kan ange sluttid
+			// själv, t ex 08:00 dagen efter
+			// Kan användas för att ange tid då frisören är hemma eller sjuk
 			case "9":
-				
+
 				String inputHairdresser = null;
 				int Hairdresser = 0;
 
@@ -156,8 +165,7 @@ public class Dialogue {
 
 				// if (OKName){
 				do {
-					
-					
+
 					try {
 						String inputTime = inputReader.readLine();
 						DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy-MM-dd HH:mm");
@@ -171,7 +179,7 @@ public class Dialogue {
 						DateTimeFormatter formatter2 = DateTimeFormatter.ofPattern("yy-MM-dd HH:mm");
 						LocalDateTime formattedInput3 = LocalDateTime.parse(inputTime2, formatter2);
 
-						myTime.setEndTime(formattedInput2);
+						myTime.setEndTime(formattedInput3);
 
 						bh.checkAvailability(myTime);
 
@@ -180,7 +188,7 @@ public class Dialogue {
 					} catch (IOException ioe2) {
 						System.out.println("Fel IO i Case 2");
 					} catch (DateTimeParseException dtpe2) {
-						OKDate = false;
+						OKDateH = false;
 						errorcounter++;
 						if (errorcounter < 2) {
 							System.out.println(
@@ -194,32 +202,36 @@ public class Dialogue {
 							System.out.println("yy-MM-dd HH:mm");
 						} else
 							System.out.println("Skärpning !!!");
-
 					}
 					break;
 
-				} while (!OKDate);
+				} while (!OKDateH);
 
-				System.out.println("Vill du lägga upp tiden som stående varje dag ?");
-				String inputRepeatTime = null;
+				// Här är tanken att lägga in ett val för frisörer så att dom
+				// kan kopiera tid då dom är hemma till nästa vecka (plus 7
+				// dagar) så att dom skapar ett schema
+				// Det lär behövas en loop som stoppar efter ett antal
+				// iterationer...
+				// System.out.println("Vill du lägga upp tiden som stående varje dag ?");
+				// String inputRepeatTime = null;
 
-				
-//				if (inputRepeatTime != null)
-//					Time repeatTime = sch.createTime(inputHairdresser, startTime, endTime);
-//					repeatTime.setStartTime(formattedInput.plusDays(7));
-//
-//					DateTimeFormatter formatter3 = DateTimeFormatter.ofPattern("yy-MM-dd HH:mm");
-//					LocalDateTime formattedInput3 = LocalDateTime.parse(inputTime3, formatter3);
-//
-//					repeatTime.setEndTime(formattedInput.plusDays(7));
-//
-//					bh.checkAvailability(repeatTime);
+				// if (inputRepeatTime != null)
+				// Time repeatTime = sch.createTime(inputHairdresser, startTime,
+				// endTime);
+				// repeatTime.setStartTime(formattedInput.plusDays(7));
+				//
+				// DateTimeFormatter formatter3 =
+				// DateTimeFormatter.ofPattern("yy-MM-dd HH:mm");
+				// LocalDateTime formattedInput3 =
+				// LocalDateTime.parse(inputTime3, formatter3);
+				//
+				// repeatTime.setEndTime(formattedInput.plusDays(7));
+				//
+				// bh.checkAvailability(repeatTime);
 
 				// lägg in ""LocalTime" för att kunna ange arbetstider
 				// Tid arbtid = "08:00")
-				
 
-				
 				// break;
 			case "0":
 			default:
