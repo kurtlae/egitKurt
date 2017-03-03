@@ -92,11 +92,11 @@ public class Dialogue {
 						// Plocka in tid från Constants
 						switch (Type) {
 						case "1":
-							myTime.setEndTime(formattedInput.plusMinutes(Constants.cutFemale));
+							myTime.setEndTime(formattedInput.plusMinutes(Constants.CUT_FEMALE));
 							break;
 
 						case "2":
-							myTime.setEndTime(formattedInput.plusMinutes(Constants.cutMale));
+							myTime.setEndTime(formattedInput.plusMinutes(Constants.CUT_MALE));
 							break;
 						default:
 							break;

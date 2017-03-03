@@ -5,18 +5,20 @@ import java.time.LocalTime;
 
 public class Constants {
 
-	public static final long cutMale = 26;
-	public static final long cutFemale = 55;
-	public static final long inBetween = 5;
-	public static final long cutType = 0;
+	// Döp om till STORA
+	
+	public static final long CUT_MALE = 26;
+	public static final long CUT_FEMALE = 55;
+	public static final long IN_BETWEEN = 5;
+	public static final long CUT_TYPE = 0;
 	
 	
-	public static final String morningStart = "08:00";
-	public static final String eveningEnd = "18:00";
+	public static final String MORNING_START = "08:00";
+	public static final String EVENING_END = "18:00";
 
-		public static long getCuttype() {
-		return cutType;
-	}
+//		public static long getCuttype() {
+//		return cutType;
+//	}
 	
 	// Används ej 
 //	private int LENGTH;

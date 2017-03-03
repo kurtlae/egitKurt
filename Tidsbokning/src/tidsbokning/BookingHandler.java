@@ -47,8 +47,8 @@ public class BookingHandler {
 		checkEnd = ct.getEndTime();
 		String checkStartDay = ct.getStartTime().toString();
 		String checkEndDay = ct.getEndTime().toString();
-		String morningStartTime = Constants.morningStart; // Plockas från konstanterna
-		String eveningEndTime = Constants.eveningEnd;
+		String morningStartTime = Constants.MORNING_START; // Plockas från konstanterna
+		String eveningEndTime = Constants.EVENING_END;
 
 		// For your eyes only: Försök att formattera datum så att man kan kolla HH:mm för angiven tid (ursprungligen yy-MM-dd HH:mm)
 //		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
