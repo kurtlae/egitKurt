@@ -1,22 +1,21 @@
 package tidsbokning;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 public class Barber {
 	
 	private String barberName;
 
-	private ArrayList<Time> book = new ArrayList<Time>();
+	private ArrayList<Time> barberBook; 
 	
 	public ArrayList<Time> getBookings(){
-		
-		return book;
-		
+		return this.barberBook;
 	}
 	
-		
-	public Barber(String barber) {
+		public Barber(String barber) {
 		this.barberName = barber;
+		this.barberBook = new ArrayList<Time>();
 	}
 
 	public String getBarberName() {
@@ -27,17 +26,13 @@ public class Barber {
 	}
 
 
-	
-	
-	
-	
-	
-	
-	
-	
+	public void setStartTime(LocalDateTime formattedInput) {
+		// TODO Auto-generated method stub
+	}
+
+
+	public void setEndTime(LocalDateTime plusMinutes) {
+		// TODO Auto-generated method stub
+	}
 
 }
-// array per frisör
-// bokningar som property i barber   bokningar = ArrayList<Time>
-// eventuellt i barber 				bokningar = ListHandler<Time>
-// i huvudprogrammet   			ArrayList<barber>

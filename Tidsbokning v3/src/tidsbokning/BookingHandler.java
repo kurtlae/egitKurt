@@ -19,8 +19,6 @@ public class BookingHandler {
 	}
 
 	public void addTime(Time t) {
-		
-		
 		bookingArray.add(t);
 	}
 
@@ -28,7 +26,7 @@ public class BookingHandler {
 		return BookingHandler.bookingArray;
 	}
 
-	public static void checkAvailability(Time ct) {
+	public static void checkAvailability(Barber chosenBarber, Time ct) {
 
 		// Ett antal test av variabler för att få check av arbetstid 08:00 - 18:00 att funka
 		// Enligt tips från coachen är det lämpligt att använda .compareTo >= som returnerar true/false i stället för .isBefore
@@ -68,11 +66,10 @@ public class BookingHandler {
 //			System.out.println("Arbetstiderna är 08:00 till 18:00");
 //			OKBusinessHours = false;
 //		} else {
-
 		
 		// kolla föreslagen tid mot de befintliga i bookingArray
 		boolean OK = true;
-			for (Time checkArray : bookingArray) { 
+			for (Time checkArray : chosenBarber.getBookings()) { 
 				if (checkEnd.isBefore(checkArray.getStartTime()) || (checkStart.isAfter(checkArray.getEndTime()))) {
 				} else {
 					System.out.println("Angiven söktid: " + ct.getStartTime());
@@ -84,9 +81,9 @@ public class BookingHandler {
 
 		// lagring i arrayen om de nya tiderna är OK	
 		if (OK) { 
-			Time time = bh.createTime(bookingName, checkStart, checkEnd);
-			bh.addTime(time);
-			System.out.println(time.getBookingName() + " är bokad: " + time.getStartTime());
+			
+			chosenBarber.getBookings().add(ct);
+			System.out.println(ct.getBookingName() + " är bokad: " + ct.getStartTime());
 		}
 	}
 }
