@@ -1,0 +1,58 @@
+package tidsbokning;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.time.*;
+import java.time.format.DateTimeFormatter;
+
+public class Hour {
+
+	private LocalTime startHour;
+	private LocalTime endHour;
+	private String bookingName;
+	private int cuttingPrice;
+	
+	public Hour (String name, LocalTime start, LocalTime end, int price){
+		try {
+			this.bookingName = name;
+			this.startHour = start;
+			this.endHour = end;
+			this.cuttingPrice = price;
+		} catch (DateTimeException dte) {
+			System.out.println("Aj då, fel i datumhanteringen (i Hour) ");	}
+	}
+
+	
+	public LocalTime getStartHour() {
+		return startHour;
+	}
+	public void setStartHour(LocalTime startHour) {
+		this.startHour = startHour;
+	}
+	public LocalTime getEndHour() {
+		return endHour;
+	}
+	public void setEndHour(LocalTime endHour) {
+		this.endHour = endHour;
+	}
+
+	public String getBookingName() {
+		return bookingName;
+	}
+
+	public int getCuttingPrice() {
+		return cuttingPrice;
+	}
+
+	public void setCuttingPrice(int price) {
+		this.cuttingPrice = price;
+	}
+
+}
+
+
