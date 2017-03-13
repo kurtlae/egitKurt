@@ -1,12 +1,18 @@
 package tidsbokning;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
@@ -25,6 +31,8 @@ public class Dialogue {
 		String svarBarber = "";
 		LocalDateTime startTime = null;
 		LocalDateTime endTime = null;
+		LocalDateTime startHour = null;
+		LocalDateTime endHour = null;
 		int errorcounter = 0;
 		int barberIndex = 0;
 
@@ -39,10 +47,17 @@ public class Dialogue {
 
 		do {
 			System.out.println("Välj frisör genom att ange första bokstaven i hens namn");
-			for (Barber snurra : barberList)
-				System.out.println(snurra.getBarberName());
+			for (Barber loop : barberList)
+				System.out.println(loop.getBarberName());
 			System.out.println("0 - Avsluta");
-			svarBarber = inputReader.readLine();
+
+			try {
+				svarBarber = inputReader.readLine();
+			} catch (IOException ioef) {
+				ioef.printStackTrace();
+				System.out.println("Ooops, tyvärr fel vid Val av frisör");
+			}
+
 			switch (svarBarber) {
 			case "u":
 				barberIndex = 0;
@@ -72,8 +87,8 @@ public class Dialogue {
 			Barber chosenBarber = barberList.get(barberIndex);
 
 			do {
-				System.out.println("/nVald frisör: " + chosenBarber.getBarberName());
-				System.out.println("1. Se bokningar\n2. Lägg till ny bokning\n3. Byt frisör\n0. Avsluta");
+				System.out.println("\nVald frisör: " + chosenBarber.getBarberName());
+				System.out.println("1. Se bokningar\n2. Lägg till ny bokning\n3. Byt frisör\n4. Spara fil\n0. Avsluta");
 
 				try {
 					svar = inputReader.readLine();
@@ -85,9 +100,9 @@ public class Dialogue {
 				switch (svar) {
 				case "1": // visa bokade tider
 					ArrayList<Time> lista = chosenBarber.getBookings();
-					for (Time snurra : lista)
-						System.out.println("Bokad tid: " + snurra.getBookingName() + " "
-								+ snurra.getStartTime().toString() + " " + snurra.getEndTime().toString());
+					for (Time loop : lista)
+						System.out.println("Bokad tid: " + loop.getBookingName() + " " + loop.getStartTime().toString()
+								+ " " + loop.getEndTime().toString());
 					break;
 
 				// Ta emot tid och kolla om den är tillgänglig
@@ -96,9 +111,8 @@ public class Dialogue {
 					String inputName = null;
 					int errorname = 0;
 
-					// Namn på personen som vill boka tid för med koll på att
-					// man
-					// inte anger nåt (bara trycker ENTER)
+					// Namn på personen som vill boka tid för
+					// koll på att man inte anger nåt (bara trycker ENTER)
 					System.out.println("Ange namn: ");
 					do {
 						if (errorname > 0) {
@@ -118,45 +132,62 @@ public class Dialogue {
 					// int errortype = 0;
 
 					// Ta emot ett datum enligt specat format
-
 					System.out.println("Ange ett datum och tid för bokning enligt formatet:\nyy-MM-dd HH:mm");
 					boolean OKDate = true;
 
 					// Loop för att tvinga användaren att ange datum i rätt
 					// format
-					// (OKDate)
 					do {
 						try {
+							int price = 0;
+							
 							String inputTime = inputReader.readLine();
-							DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy-MM-dd HH:mm");
-							LocalDateTime formattedInput = LocalDateTime.parse(inputTime, formatter);
+							
+							DateTimeFormatter formatterDate = DateTimeFormatter.ofPattern("yy-MM-dd HH:mm");
+							LocalDateTime formattedInputDate = LocalDateTime.parse(inputTime, formatterDate);
+							Time myTime = bh.createTime(inputName, startTime, endTime, price);
+							myTime.setStartTime(formattedInputDate);
+							
+//							DateTimeFormatter formatterHour = DateTimeFormatter.ofPattern("HH:mm");
+//							LocalDateTime formattedInputHour = LocalDateTime.parse(inputTime, formatterHour);
+//							Time myHour = bh.createTime(inputName, startHour, endHour, price);
+//							myHour.setStartTime(formattedInputHour); 
+//							System.out.println(myHour);
 
-							// Barber myTime = bh.createTime(chosenBarber,
-							// inputName, startTime, endTime);
-							Time myTime = bh.createTime(inputName, startTime, endTime);
-							myTime.setStartTime(formattedInput);
+//							Hour myHour = bh.createHour(inputName, startHour, endHour, price);
+//							myHour.setStartHour(startHour); 
 
 							// Val av klipptyp
 							System.out.println("Ange typ av klippning\n1. Kvinnlig\n2. Manlig");
 
 							String Type = inputReader.readLine();
 
-							// Plocka in tid från Constants
+							// Plocka in tid och pris från Constants
 							switch (Type) {
 							case "1":
-								myTime.setEndTime(formattedInput.plusMinutes(Constants.CUT_FEMALE));
+								myTime.setEndTime(formattedInputDate.plusMinutes(Constants.CUT_FEMALE));
+								myTime.setCuttingPrice(Constants.PRICE_FEMALE);
+//								myHour.setEndHour(startHour.plusMinutes(Constants.CUT_FEMALE));
+//								myHour.setEndTime(formattedInputHour.plusMinutes(Constants.CUT_FEMALE));
+//								myHour.setCuttingPrice(Constants.PRICE_FEMALE);
 								break;
 
 							case "2":
-								myTime.setEndTime(formattedInput.plusMinutes(Constants.CUT_MALE));
+								myTime.setEndTime(formattedInputDate.plusMinutes(Constants.CUT_MALE));
+								myTime.setCuttingPrice(Constants.PRICE_MALE);
+//								myHour.setEndHour(startHour.plusMinutes(Constants.CUT_MALE));
+//								myHour.setEndTime(formattedInputHour.plusMinutes(Constants.CUT_MALE));
+//								myHour.setCuttingPrice(Constants.PRICE_MALE);
 								break;
 							default:
 								break;
 							}
 
 							// Skicka tiden för kontroll om den är tillgänglig
-							// eller
-							// ej
+							// eller ej
+							
+//							bh.openTime(myHour);
+							
 							bh.checkAvailability(chosenBarber, myTime);
 
 						} catch (NumberFormatException nfe) {
@@ -183,7 +214,8 @@ public class Dialogue {
 										"Logiken är så här:\nyy är år\nMM är månad i siffror\ndd är datum\nHH är timme enligt 24-timmarsregeln\nmm är minuter\nAntal bokstäver visar antal siffror du ska ange");
 								System.out.println("yy-MM-dd HH:mm");
 							} else
-								System.out.println("Skärpning !!!");
+								System.out.println(
+										"Skärpning !!!" + " Nu har du gjort fel " + errorcounter + " gånger...");
 						}
 						break;
 					} while (!OKDate);
@@ -195,7 +227,14 @@ public class Dialogue {
 						for (Barber snurra : barberList)
 							System.out.println(snurra.getBarberName());
 						System.out.println("0 - Avsluta");
-						svarBarber = inputReader.readLine();
+
+						try {
+							svarBarber = inputReader.readLine();
+						} catch (Exception ioef2) {
+							ioef2.printStackTrace();
+							System.out.println("Ooops, tyvärr fel vid byte av frisör");
+						}
+
 						switch (svarBarber) {
 						case "u":
 							barberIndex = 0;
@@ -235,9 +274,13 @@ public class Dialogue {
 					// case "0":
 					// default:
 					// break;
+					
+				case "4":
+					bh.saveBookings(chosenBarber);
 				}
 			} while (!svar.equals("0"));
 		} while (!svar.equals("0"));
 		System.out.println("Avslut!");
 	}
+
 }

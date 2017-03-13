@@ -25,11 +25,9 @@ public class Barber {
 		this.barberName = barberName;
 	}
 
-
 	public void setStartTime(LocalDateTime formattedInput) {
 		// TODO Auto-generated method stub
 	}
-
 
 	public void setEndTime(LocalDateTime plusMinutes) {
 		// TODO Auto-generated method stub
